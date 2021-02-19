@@ -1,0 +1,19 @@
+.Phonebook__form {
+  border: 1px solid black;
+  padding: 10px;
+  max-width: 300px;
+}
+
+.Phonebook__form label {
+  display: inline-block;
+
+  font-size: 20px;
+  font-weight: 500;
+
+  margin: 0 0 10px 0;
+}
+
+.Phonebook__form input {
+  display: block;
+  margin: 0 0 20px 0;
+}

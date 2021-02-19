@@ -1,0 +1,9 @@
+.contacts__item {
+  font-size: 20px;
+  margin: 10px 0;
+
+  & p {
+    display: inline-block;
+    margin: 0 10px 0 0;
+  }
+}
