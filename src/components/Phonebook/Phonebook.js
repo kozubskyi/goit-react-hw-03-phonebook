@@ -9,13 +9,16 @@ import './Phonebook.scss';
 
 //* Phonebook хуками
 const Phonebook = () => {
-  const initialContacts = () => JSON.parse(localStorage.getItem('contacts')) || [];
-  const [contacts, setContacts] = useState(initialContacts);
+  const [contacts, setContacts] = useState([]);
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
+    setContacts(JSON.parse(localStorage.getItem('contacts')) || []);
+  }, []);
+
+  useEffect(() => {
     localStorage.setItem('contacts', JSON.stringify(contacts));
-  });
+  }, [contacts]);
 
   const changeFilterInputValue = event => setFilter(event.target.value);
 
@@ -82,6 +85,11 @@ const Phonebook = () => {
 //   }
 // }
 
+Phonebook.defaultProps = {
+  contacts: [],
+  filter: '',
+};
+
 Phonebook.propTypes = {
   contacts: PropTypes.arrayOf(
     PropTypes.shape({
@@ -89,8 +97,8 @@ Phonebook.propTypes = {
       name: PropTypes.string.isRequired,
       number: PropTypes.string.isRequired,
     }).isRequired,
-  ).isRequired,
-  filter: PropTypes.string.isRequired,
+  ),
+  filter: PropTypes.string,
 };
 
 export default Phonebook;
