@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import ContactForm from '../ContactForm/ContactForm';
@@ -7,51 +7,80 @@ import ContactList from '../ContactList/ContactList';
 
 import './Phonebook.scss';
 
-class Phonebook extends Component {
-  static defaultProps = {
-    contacts: [],
-    filter: '',
-  };
+//* Phonebook хуками
+const Phonebook = () => {
+  const initialContacts = () => JSON.parse(localStorage.getItem('contacts')) || [];
+  const [contacts, setContacts] = useState(initialContacts);
+  const [filter, setFilter] = useState('');
 
-  state = {
-    contacts: this.props.contacts,
-    filter: this.props.filter,
-  };
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  });
 
-  componentDidMount() {
-    const localStorageContacts = JSON.parse(localStorage.getItem('contacts'));
-    localStorageContacts && this.setState({ contacts: localStorageContacts });
-    // if (localStorageContacts) { // если массив не пустой, то вернет true, если пустой, то вернет null (false)
-    //   this.setState({ contacts: localStorageContacts });
-    // }
-  }
+  const changeFilterInputValue = event => setFilter(event.target.value);
 
-  componentDidUpdate(prevProps, prevState) {
-    prevState.contacts !== this.state.contacts && localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    // if (prevState.contacts !== this.state.contacts) {
-    //   localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    // }
-  }
+  const handleFormSubmit = contact => setContacts([...contacts, contact]);
 
-  changeFilterInputValue = event => this.setState({ filter: event.target.value });
+  const deleteContact = contactId => setContacts(prev => prev.filter(contact => contact.id !== contactId));
 
-  handleFormSubmit = contact => this.setState({ contacts: [...this.state.contacts, contact] });
+  return (
+    <>
+      <h1 className="main-title">Phonebook</h1>
+      <ContactForm handleFormSubmit={handleFormSubmit} contacts={contacts} />
+      <h2 className="title__contacts">Contacts</h2>
+      <Filter filter={filter} changeFilterInputValue={changeFilterInputValue} />
+      <ContactList contacts={contacts} filter={filter} deleteContact={deleteContact} />
+    </>
+  );
+};
 
-  deleteContact = contactId =>
-    this.setState(prevState => ({ contacts: prevState.contacts.filter(contact => contact.id !== contactId) }));
+//* Phonebook классом
+// import { Component } from 'react';
+// class Phonebook extends Component {
+//   static defaultProps = {
+//     contacts: [],
+//     filter: '',
+//   };
 
-  render() {
-    return (
-      <>
-        <h1 className="main-title">Phonebook</h1>
-        <ContactForm handleFormSubmit={this.handleFormSubmit} contacts={this.state.contacts} />
-        <h2 className="title__contacts">Contacts</h2>
-        <Filter filter={this.state.filter} changeFilterInputValue={this.changeFilterInputValue} />
-        <ContactList contacts={this.state.contacts} filter={this.state.filter} deleteContact={this.deleteContact} />
-      </>
-    );
-  }
-}
+//   state = {
+//     contacts: this.props.contacts,
+//     filter: this.props.filter,
+//   };
+
+//   componentDidMount() {
+//     const localStorageContacts = JSON.parse(localStorage.getItem('contacts'));
+//     localStorageContacts && this.setState({ contacts: localStorageContacts });
+//     // if (localStorageContacts) { // если массив не пустой, то вернет true, если пустой, то вернет null (false)
+//     //   this.setState({ contacts: localStorageContacts });
+//     // }
+//   }
+
+//   componentDidUpdate(prevProps, prevState) {
+//     prevState.contacts !== this.state.contacts && localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+//     // if (prevState.contacts !== this.state.contacts) {
+//     //   localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+//     // }
+//   }
+
+//   changeFilterInputValue = event => this.setState({ filter: event.target.value });
+
+//   handleFormSubmit = contact => this.setState({ contacts: [...this.state.contacts, contact] });
+
+//   deleteContact = contactId =>
+//     this.setState(prevState => ({ contacts: prevState.contacts.filter(contact => contact.id !== contactId) }));
+
+//   render() {
+//     return (
+//       <>
+//         <h1 className="main-title">Phonebook</h1>
+//         <ContactForm handleFormSubmit={this.handleFormSubmit} contacts={this.state.contacts} />
+//         <h2 className="title__contacts">Contacts</h2>
+//         <Filter filter={this.state.filter} changeFilterInputValue={this.changeFilterInputValue} />
+//         <ContactList contacts={this.state.contacts} filter={this.state.filter} deleteContact={this.deleteContact} />
+//       </>
+//     );
+//   }
+// }
 
 Phonebook.propTypes = {
   contacts: PropTypes.arrayOf(
